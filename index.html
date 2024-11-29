@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator Absensi Siswa</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+        }
+        h1 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        form {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        button {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #388E3C, #4CAF50);
+            transform: scale(1.05);
+        }
+        #qrCode {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        #qrCode img {
+            border: 5px solid white;
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff;
+        }
+        #downloadBtn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            margin-top: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+        .tap{
+                display: flex;
+                background-color: #11a018;
+                padding: 5px;
+                border-radius: 8px;
+        }
+        .tap img{
+                width: 30px;
+                height: 40px;
+                border-radius: 8px;
+                margin: 8px;
+        }
+        #downloadBtn:hover {
+            background: linear-gradient(135deg, #1976D2, #2196F3);
+            transform: scale(1.05);
+        }
+        .notification {
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+        }
+        .error {
+            background: #F44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+        <div class="tap">
+                <img src="https://i.ibb.co.com/9V57Jwp/images.jpg">
+                <h2>SMAN 1 SINDANGBARANG</h2>
+        </div>
+    <h1>Generator QR Code Absensi</h1>
+    <form id="qrForm">
+        <input type="text" id="studentId" placeholder="Masukkan ID Siswa (min. 5 karakter)" required minlength="5">
+        <button type="submit">Buat QR Code</button>
+    </form>
+    <div class="notification" id="notification"></div>
+    <div id="qrCode">
+        <img id="qrCodeImage" src="" alt="QR Code">
+        <a id="downloadBtn" href="#" download>Download QR Code</a>
+    </div>
+    <script>
+        const form = document.getElementById("qrForm");
+        const notification = document.getElementById("notification");
+        const qrCodeContainer = document.getElementById("qrCode");
+        const qrImage = document.getElementById("qrCodeImage");
+        const downloadBtn = document.getElementById("downloadBtn");
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById("studentId").value.trim();
+
+            if (studentId.length < 5) {
+                showNotification("ID Siswa harus minimal 5 karakter.", "error");
+                return;
+            }
+
+            QRCode.toDataURL(studentId, { margin: 2, color: { dark: "#000", light: "#FFF" } }, function(error, url) {
+                if (error) {
+                    console.error("Error:", error);
+                    showNotification("Gagal membuat QR Code. Coba lagi.", "error");
+                } else {
+                    qrImage.src = url;
+                    downloadBtn.href = url;
+                    downloadBtn.download = `QR_Code_${studentId}.png`;
+                    qrCodeContainer.style.display = "block";
+                    showNotification("QR Code berhasil dibuat!", "success");
+                }
+            });
+        });
+
+        function showNotification(message, type) {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = "block";
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
